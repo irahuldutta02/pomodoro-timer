@@ -207,7 +207,7 @@ export function Pomodoro() {
         className="fixed bg-color4 text-color1 text-3xl p-2 rounded-lg flex justify-center items-center right-4 bottom-4 cursor-pointer"
         onClick={() => setShowModal(!showModal)}
       >
-        <i id="settingsIcon" className="fa-solid fa-gear fa-spin"></i>
+        <i id="settingsIcon" className="fa-solid fa-gear"></i>
       </div>
       <div
         id="settingsModal"
