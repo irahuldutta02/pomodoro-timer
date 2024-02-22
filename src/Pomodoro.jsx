@@ -120,6 +120,9 @@ export function Pomodoro() {
 
   return (
     <>
+      <div className="flex justify-center items-center">
+        <h1 className="text-3xl">Pomodoro</h1>
+      </div>
       <div className="flex justify-center items-center flex-col gap-8 w-full max-w-96 p-4 bg-color3 bg-opacity-15 shadow-lg rounded-lg">
         <div className="flex justify-center items-center gap-4 font-bold text-sm w-full">
           <button
