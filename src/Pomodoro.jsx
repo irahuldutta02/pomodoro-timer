@@ -78,7 +78,7 @@ export function Pomodoro() {
     if (timerType === "pomodoro") {
       setTimer({ min: 50, sec: 0 });
     } else if (timerType === "short-break") {
-      setTimer({ min: 1, sec: 20 });
+      setTimer({ min: 10, sec: 0 });
     } else if (timerType === "long-break") {
       setTimer({ min: 15, sec: 0 });
     }
