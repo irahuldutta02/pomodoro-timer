@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
 export function Pomodoro() {
+  const audioRef = useRef(new Audio());
+
   const [showModal, setShowModal] = useState(false);
   const [music, setMusic] = useState("default");
   const [timerState, setTimerState] = useState("stopped");
@@ -26,25 +28,95 @@ export function Pomodoro() {
   }, []);
 
   function startTimer() {
-    
+    timerRef.current = setInterval(() => {
+      setTimer((prev) => {
+        if (prev.min === 0 && prev.sec === 0) {
+          clearInterval(timerRef.current);
+          handleRest();
+          return prev;
+        }
+        if (prev.sec === 0) {
+          return {
+            min: prev.min - 1,
+            sec: 59,
+          };
+        }
+        return {
+          min: prev.min,
+          sec: prev.sec - 1,
+        };
+      });
+    }, 1000);
+  }
+
+  function stopTimer() {
+    clearInterval(timerRef.current);
   }
 
   function handleStart() {
     setTimerState("running");
+    startTimer();
   }
 
   function handlePause() {
     setTimerState("paused");
+    stopTimer();
+  }
+
+  function handleResume() {
+    setTimerState("running");
+    startTimer();
   }
 
   function handleRest() {
     setTimerState("stopped");
+    setTimeAccordingToTimerType(timerType);
+    stopTimer();
+  }
+
+  function setTimeAccordingToTimerType(timerType) {
+    if (timerType === "pomodoro") {
+      setTimer({ min: 50, sec: 0 });
+    } else if (timerType === "short-break") {
+      setTimer({ min: 1, sec: 20 });
+    } else if (timerType === "long-break") {
+      setTimer({ min: 15, sec: 0 });
+    }
   }
 
   function handleTimerType(type) {
-    handleRest();
     setTimerType(type);
+    handleRest();
   }
+
+  function handleMusicChange() {
+    setShowModal(false);
+  }
+
+  useEffect(() => {
+    setTimeAccordingToTimerType(timerType);
+  }, [timerType]);
+
+  useEffect(() => {
+    if (music === "default") {
+      audioRef.current.src = "";
+    }
+    if (music === "music_1") {
+      audioRef.current.src = "music/music_1.mp3";
+    }
+    if (music === "music_2") {
+      audioRef.current.src = "music/music_2.mp3";
+      audioRef.current.currentTime = 51;
+    }
+
+    if (music !== "default" && timerState === "running") {
+      audioRef.current.play();
+      audioRef.current.loop = true;
+    } else {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  }, [music, timerState]);
 
   return (
     <>
@@ -88,29 +160,42 @@ export function Pomodoro() {
         </div>
         <div className="flex-1 w-full flex justify-center items-center text-6xl gap-4">
           <div className="">
-            <span>{timer.min}</span> <span>:</span>{" "}
-            <span>{timer.sec === 0 ? "00" : timer.sec}</span>
+            <span>{timer.min}</span> <span>:</span> <span>{timer.sec}</span>
           </div>
         </div>
         <div className="w-full flex justify-center items-center gap-4 font-bold">
-          <button
-            className="flex justify-center items-center bg-color2 px-6 py-2 rounded-lg"
-            onClick={handleStart}
-          >
-            Start
-          </button>
-          <button
-            className="flex justify-center items-center bg-color2 px-6 py-2 rounded-lg"
-            onClick={handlePause}
-          >
-            Pause
-          </button>
-          <button
-            className="flex justify-center items-center bg-color3 text-color1 px-6 py-2 rounded-lg"
-            onClick={handleRest}
-          >
-            Reset
-          </button>
+          {timerState === "stopped" && (
+            <button
+              className="flex justify-center items-center bg-color2 px-6 py-2 rounded-lg"
+              onClick={handleStart}
+            >
+              Start
+            </button>
+          )}
+          {timerState === "running" && (
+            <button
+              className="flex justify-center items-center bg-color2 px-6 py-2 rounded-lg"
+              onClick={handlePause}
+            >
+              Pause
+            </button>
+          )}
+          {timerState === "paused" && (
+            <button
+              className="flex justify-center items-center bg-color2 px-6 py-2 rounded-lg"
+              onClick={handleResume}
+            >
+              Resume
+            </button>
+          )}
+          {timerState === "running" && (
+            <button
+              className="flex justify-center items-center bg-color3 text-color1 px-6 py-2 rounded-lg"
+              onClick={handleRest}
+            >
+              Reset
+            </button>
+          )}
         </div>
       </div>
 
@@ -132,11 +217,14 @@ export function Pomodoro() {
           name="musicChoice"
           className="w-full p-2 rounded-md bg-color3 outline-none "
           value={music}
-          onChange={(e) => setMusic(e.target.value)}
+          onChange={(e) => {
+            setMusic(e.target.value);
+            handleMusicChange(e.target.value);
+          }}
         >
-          <option value="default">Select Music</option>
-          <option value="music_1">Music_1</option>
-          <option value="music_2">Music_2</option>
+          <option value="default">No Music</option>
+          <option value="music_1">Music 1</option>
+          <option value="music_2">Music 2</option>
         </select>
       </div>
     </>
