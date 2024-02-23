@@ -130,7 +130,7 @@ export function Pomodoro() {
       <div className="flex justify-center items-center">
         <h1 className="text-3xl">Pomodoro</h1>
       </div>
-      <div className="flex justify-center items-center flex-col gap-8 w-full max-w-96 p-4 bg-color3 bg-opacity-15 shadow-lg rounded-lg">
+      <div className="flex justify-center items-center flex-col gap-2 lg:gap-4 w-full max-w-96 p-4 bg-color3 bg-opacity-15 shadow-lg rounded-lg">
         <div className="flex justify-center items-center gap-4 font-bold text-sm w-full">
           <button
             disabled={timerState === "running"}
@@ -168,15 +168,15 @@ export function Pomodoro() {
             Long Break
           </button>
         </div>
-        <div className="flex-1 w-full flex justify-center items-center text-6xl gap-4">
+        <div className="flex-1 w-full flex justify-center items-center text-5xl lg:text-6xl gap-4">
           <div className="">
             <span>{timer.min}</span> <span>:</span> <span>{timer.sec}</span>
           </div>
         </div>
-        <div className="w-full flex justify-center items-center gap-4 font-bold">
+        <div className="w-full flex justify-center items-center gap-4 font-bold text-sm">
           {timerState === "stopped" && (
             <button
-              className="flex justify-center items-center bg-color2 px-6 py-2 rounded-lg"
+              className="flex justify-center items-center bg-color2 p-2 min-w-24 rounded-lg"
               onClick={handleStart}
             >
               Start
