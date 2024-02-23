@@ -7,20 +7,23 @@ export function Pomodoro() {
   const [music, setMusic] = useState("default");
   const [timerState, setTimerState] = useState("stopped");
   const [timerType, setTimerType] = useState("pomodoro");
+  const [musicVolume, setMusicVolume] = useState(100); // [0, 100]
   const [timer, setTimer] = useState({
     min: 50,
     sec: 0,
   });
 
   const timerRef = useRef(null);
+  const settingsRef = useRef(null);
+  const showCurrentMusicRef = useRef(null);
 
   useEffect(() => {
     window.addEventListener("click", (e) => {
       if (
-        e.target.id !== "settingsModal" &&
-        e.target.id !== "settingsButton" &&
-        e.target.id !== "settingsIcon" &&
-        e.target.id !== "musicChoice"
+        settingsRef.current &&
+        !settingsRef.current.contains(e.target) &&
+        showCurrentMusicRef.current &&
+        !showCurrentMusicRef.current.contains(e.target)
       ) {
         setShowModal(false);
       }
@@ -118,6 +121,10 @@ export function Pomodoro() {
     }
   }, [music, timerState]);
 
+  useEffect(() => {
+    audioRef.current.volume = musicVolume / 100;
+  }, [musicVolume]);
+
   return (
     <>
       <div className="flex justify-center items-center">
@@ -200,35 +207,96 @@ export function Pomodoro() {
             </button>
           )}
         </div>
+        <div
+          ref={showCurrentMusicRef}
+          className="w-full flex justify-end items-center "
+        >
+          <div
+            className="flex justify-end items-center gap-2 text-sm bg-color3 bg-opacity-20 py-2 px-2 rounded-md cursor-pointer "
+            onClick={() => setShowModal(!showModal)}
+          >
+            {music == "default" ? (
+              <>
+                <span>
+                  <i className="fa-solid fa-volume-xmark"></i>
+                </span>
+                <span>No Music</span>
+              </>
+            ) : music == "music_1" ? (
+              <>
+                <span>
+                  <i
+                    className={`fa-solid fa-music ${
+                      timerState === "running" && "fa-spin-pulse"
+                    }`}
+                  ></i>
+                </span>
+                <span>
+                  <span>Kishna Flute</span>
+                </span>
+              </>
+            ) : (
+              <>
+                <span>
+                  <i
+                    className={`fa-solid fa-music ${
+                      timerState === "running" && "fa-spin-pulse"
+                    }`}
+                  ></i>
+                </span>
+                <span>
+                  <span>Focus Lofi</span>
+                </span>
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div
-        id="settingsButton"
-        className="fixed bg-color4 text-color1 text-3xl p-2 rounded-lg flex justify-center items-center right-4 bottom-4 cursor-pointer"
-        onClick={() => setShowModal(!showModal)}
-      >
-        <i id="settingsIcon" className="fa-solid fa-gear"></i>
-      </div>
-      <div
-        id="settingsModal"
-        className={`fixed w-56 h-40 bg-color4 right-[5rem] rounded-lg bottom-4 text-color1 flex justify-center p-4 items-center
+      <div id="settings" ref={settingsRef}>
+        <div
+          id="settingsButton"
+          className="fixed bg-color4 text-color1 text-3xl p-2 rounded-lg flex justify-center items-center right-4 bottom-4 cursor-pointer"
+          onClick={() => setShowModal(!showModal)}
+        >
+          <i id="settingsIcon" className="fa-solid fa-gear"></i>
+        </div>
+        <div
+          id="settingsModal"
+          className={`fixed w-56 h-40 bg-color4 right-[5rem] rounded-lg bottom-4 text-color1 flex justify-center p-4 items-center flex-col gap-4
       ${showModal ? "block" : "hidden"}
       `}
-      >
-        <select
-          id="musicChoice"
-          name="musicChoice"
-          className="w-full p-2 rounded-md bg-color3 outline-none "
-          value={music}
-          onChange={(e) => {
-            setMusic(e.target.value);
-            handleMusicChange(e.target.value);
-          }}
         >
-          <option value="default">No Music</option>
-          <option value="music_1">Music 1</option>
-          <option value="music_2">Music 2</option>
-        </select>
+          <select
+            id="musicChoice"
+            name="musicChoice"
+            className="w-full p-2 rounded-md bg-color3 outline-none "
+            value={music}
+            onChange={(e) => {
+              setMusic(e.target.value);
+              handleMusicChange(e.target.value);
+            }}
+          >
+            <option value="default">No Music</option>
+            <option value="music_1">Krishna Flute</option>
+            <option value="music_2">Focus Lofi</option>
+          </select>
+          <div className="w-full flex justify-center items-center flex-col gap-2">
+            <label htmlFor="musicVolume">Volume</label>
+            <input
+              type="range"
+              name="musicVolume"
+              id="musicVolume"
+              min="1"
+              max="100"
+              className="w-full text-color2 h-2 bg-color1 rounded-lg appearance-none cursor-pointer 
+              [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-color2 [&::-webkit-slider-thumb]:rounded-full
+              "
+              value={musicVolume}
+              onChange={(e) => setMusicVolume(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
     </>
   );
