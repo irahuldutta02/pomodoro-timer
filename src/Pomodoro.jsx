@@ -168,7 +168,7 @@ export function Pomodoro() {
             Long Break
           </button>
         </div>
-        <div className="flex-1 w-full flex justify-center items-center text-5xl lg:text-6xl gap-4">
+        <div className="flex-1 w-full flex justify-center p-4 items-center text-5xl lg:text-6xl gap-4">
           <div className="">
             <span>{timer.min}</span> <span>:</span> <span>{timer.sec}</span>
           </div>
