@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
       manifest: {
-        name: "Pomodoro App",
-        short_name: "Pomodoro App",
-        theme_color: "#ffffff",
+        name: "Pomodoro",
+        short_name: "Pomodoro",
+        theme_color: "#42032C",
         icons: [
           {
             src: "pwa-64x64.png",
