@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
 export function Pomodoro() {
-  const audioRef = useRef(new Audio());
-
   const [showModal, setShowModal] = useState(false);
   const [music, setMusic] = useState("default");
   const [timerState, setTimerState] = useState("stopped");
   const [timerType, setTimerType] = useState("pomodoro");
+  const [date, setDate] = useState(new Date());
   const [musicVolume, setMusicVolume] = useState(100); // [0, 100]
   const [timer, setTimer] = useState({
     min: 50,
@@ -14,20 +13,28 @@ export function Pomodoro() {
   });
 
   const timerRef = useRef(null);
+  const audioRef = useRef(new Audio());
+  const dateTimeRef = useRef(null);
   const settingsRef = useRef(null);
-  const showCurrentMusicRef = useRef(null);
 
   useEffect(() => {
     window.addEventListener("click", (e) => {
-      if (
-        settingsRef.current &&
-        !settingsRef.current.contains(e.target) &&
-        showCurrentMusicRef.current &&
-        !showCurrentMusicRef.current.contains(e.target)
-      ) {
+      if (settingsRef.current && !settingsRef.current.contains(e.target)) {
         setShowModal(false);
       }
     });
+  }, []);
+
+  useEffect(() => {
+    function updateDateTime() {
+      clearInterval(dateTimeRef.current);
+
+      dateTimeRef.current = setInterval(() => {
+        setDate(new Date());
+      }, 1000);
+    }
+
+    updateDateTime();
   }, []);
 
   function startTimer() {
@@ -125,12 +132,44 @@ export function Pomodoro() {
     audioRef.current.volume = musicVolume / 100;
   }, [musicVolume]);
 
+  function getDayName(day) {
+    switch (day) {
+      case 0:
+        return "SUN";
+      case 1:
+        return "MON";
+      case 2:
+        return "TUE";
+      case 3:
+        return "WEB";
+      case 4:
+        return "THU";
+      case 5:
+        return "FRI";
+      case 6:
+        return "SAT";
+    }
+  }
+
   return (
     <>
+      {/* Data Time */}
+      <div id="datetime">
+        <div className="fixed font-bold bg-color4 text-color1 py-1 px-2 rounded-lg flex justify-center items-center gap-4 left-2 top-2 text-sm tracking-widest min-w-[17rem]">
+          <span>{date.toLocaleDateString()}</span>
+          <span>{date.toLocaleTimeString()}</span>
+          <span>{getDayName(date.getDay())}</span>
+        </div>
+      </div>
+
+      {/* App Heading */}
       <div className="flex justify-center items-center">
         <h1 className="text-3xl">Pomodoro</h1>
       </div>
-      <div className="flex justify-center items-center flex-col gap-2 lg:gap-4 w-full max-w-96 p-4 bg-color3 bg-opacity-15 shadow-lg rounded-lg">
+
+      {/* Main Block */}
+      <div className="flex justify-center items-center flex-col gap-4 w-full max-w-96 p-4 bg-color3 bg-opacity-15 shadow-lg rounded-lg">
+        {/* timer types */}
         <div className="flex justify-center items-center gap-4 font-bold text-sm w-full">
           <button
             disabled={timerState === "running"}
@@ -168,11 +207,15 @@ export function Pomodoro() {
             Long Break
           </button>
         </div>
+
+        {/* timer */}
         <div className="flex-1 w-full flex justify-center p-4 items-center text-5xl lg:text-6xl gap-4">
           <div className="">
             <span>{timer.min}</span> <span>:</span> <span>{timer.sec}</span>
           </div>
         </div>
+
+        {/* control buttons */}
         <div className="w-full flex justify-center items-center gap-4 font-bold text-sm">
           {timerState === "stopped" && (
             <button
@@ -207,14 +250,16 @@ export function Pomodoro() {
             </button>
           )}
         </div>
+      </div>
+
+      {/* music settings */}
+      <div id="settings" ref={settingsRef}>
         <div
-          ref={showCurrentMusicRef}
-          className="w-full flex justify-end items-center "
+          id="settingsButton"
+          className="fixed bg-color4 text-color1 py-1 px-2 rounded-lg flex justify-center items-center right-2 bottom-2 font-bold cursor-pointer"
+          onClick={() => setShowModal(!showModal)}
         >
-          <div
-            className="flex justify-end items-center gap-2 text-sm bg-color3 bg-opacity-20 py-2 px-2 rounded-md cursor-pointer "
-            onClick={() => setShowModal(!showModal)}
-          >
+          <div className="flex justify-end items-center gap-2 text-sm rounded-md cursor-pointer ">
             {music == "default" ? (
               <>
                 <span>
@@ -251,19 +296,8 @@ export function Pomodoro() {
             )}
           </div>
         </div>
-      </div>
-
-      <div id="settings" ref={settingsRef}>
         <div
-          id="settingsButton"
-          className="fixed bg-color4 text-color1 text-3xl p-2 rounded-lg flex justify-center items-center right-4 bottom-4 cursor-pointer"
-          onClick={() => setShowModal(!showModal)}
-        >
-          <i id="settingsIcon" className="fa-solid fa-gear"></i>
-        </div>
-        <div
-          id="settingsModal"
-          className={`fixed w-56 h-40 bg-color4 right-[5rem] rounded-lg bottom-4 text-color1 flex justify-center p-4 items-center flex-col gap-4
+          className={`fixed w-40 h-40 bg-color4 rounded-lg right-32  bottom-2 text-color1 flex justify-center p-4 items-center flex-col gap-4
       ${showModal ? "block" : "hidden"}
       `}
         >
