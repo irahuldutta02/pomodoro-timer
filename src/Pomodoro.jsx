@@ -151,6 +151,10 @@ export function Pomodoro() {
     }
   }
 
+  function returnMax15Char(string) {
+    return string.length > 15 ? string.slice(0, 15) + "..." : string;
+  }
+
   return (
     <>
       {/* Data Time */}
@@ -256,7 +260,7 @@ export function Pomodoro() {
       <div id="settings" ref={settingsRef}>
         <div
           id="settingsButton"
-          className="fixed bg-color4 text-color1 py-1 px-2 rounded-lg flex justify-center items-center right-4 bottom-4 font-bold cursor-pointer"
+          className="fixed bg-color4 text-color1 py-1 px-2 rounded-lg flex justify-center items-center right-4 bottom-4 font-bold cursor-pointer min-w-32"
           onClick={() => setShowModal(!showModal)}
         >
           <div className="flex justify-end items-center gap-2 text-sm rounded-md cursor-pointer ">
@@ -265,39 +269,47 @@ export function Pomodoro() {
                 <span>
                   <i className="fa-solid fa-volume-xmark"></i>
                 </span>
-                <span>No Music</span>
+                <span>{returnMax15Char("No Music")}</span>
               </>
             ) : music == "music_1" ? (
               <>
                 <span>
-                  <i
-                    className={`fa-solid fa-music ${
-                      timerState === "running" && "fa-spin-pulse"
-                    }`}
-                  ></i>
+                  {musicVolume === "0" ? (
+                    <i className="fa-solid fa-volume-xmark"></i>
+                  ) : (
+                    <i
+                      className={`fa-solid fa-music ${
+                        timerState === "running" && "fa-spin-pulse"
+                      }`}
+                    ></i>
+                  )}
                 </span>
                 <span>
-                  <span>Kishna Flute</span>
+                  <span>{returnMax15Char("Krishna Flute")}</span>
                 </span>
               </>
             ) : (
               <>
                 <span>
-                  <i
-                    className={`fa-solid fa-music ${
-                      timerState === "running" && "fa-spin-pulse"
-                    }`}
-                  ></i>
+                  {musicVolume === "0" ? (
+                    <i className="fa-solid fa-volume-xmark"></i>
+                  ) : (
+                    <i
+                      className={`fa-solid fa-music ${
+                        timerState === "running" && "fa-spin-pulse"
+                      }`}
+                    ></i>
+                  )}
                 </span>
                 <span>
-                  <span>Focus Lofi</span>
+                  <span>{returnMax15Char("Focus Lofi")}</span>
                 </span>
               </>
             )}
           </div>
         </div>
         <div
-          className={`fixed w-40 h-40 bg-color4 rounded-lg right-[8rem] bottom-4 text-color1 flex justify-center p-4 items-center flex-col gap-4
+          className={`fixed w-40 h-40 bg-color4 rounded-lg right-[9.5rem] bottom-4 text-color1 flex justify-center p-4 items-center flex-col gap-4
       ${showModal ? "block" : "hidden"}
       `}
         >
@@ -311,24 +323,39 @@ export function Pomodoro() {
               handleMusicChange(e.target.value);
             }}
           >
-            <option value="default">No Music</option>
-            <option value="music_1">Krishna Flute</option>
-            <option value="music_2">Focus Lofi</option>
+            <option value="default">{returnMax15Char("No Music")}</option>
+            <option value="music_1">{returnMax15Char("Krishna Flute")}</option>
+            <option value="music_2">{returnMax15Char("Focus Lofi")}</option>
           </select>
           <div className="w-full flex justify-center items-center flex-col gap-2">
             <label htmlFor="musicVolume">Volume</label>
-            <input
-              type="range"
-              name="musicVolume"
-              id="musicVolume"
-              min="1"
-              max="100"
-              className="w-full text-color2 h-2 bg-color1 rounded-lg appearance-none cursor-pointer 
+            <div className="w-full flex justify-center items-center gap-2">
+              <div className="flex justify-start items-center w-8">
+                {musicVolume === "0" && (
+                  <i className="fa-solid fa-volume-xmark"></i>
+                )}
+                {musicVolume > 0 && musicVolume <= 50 && (
+                  <i className="fa-solid fa-volume-low"></i>
+                )}
+                {musicVolume > 50 && musicVolume <= 100 && (
+                  <i className="fa-solid fa-volume-high"></i>
+                )}
+              </div>
+              <input
+                type="range"
+                name="musicVolume"
+                id="musicVolume"
+                min="0"
+                max="100"
+                className="w-full text-color2 h-2 bg-color1 rounded-lg appearance-none cursor-pointer 
               [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-color2 [&::-webkit-slider-thumb]:rounded-full
               "
-              value={musicVolume}
-              onChange={(e) => setMusicVolume(e.target.value)}
-            />
+                value={musicVolume}
+                onChange={(e) => {
+                  setMusicVolume(e.target.value);
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
