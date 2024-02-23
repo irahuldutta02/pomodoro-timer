@@ -155,7 +155,7 @@ export function Pomodoro() {
     <>
       {/* Data Time */}
       <div id="datetime">
-        <div className="fixed font-bold bg-color4 text-color1 py-1 px-2 rounded-lg flex justify-center items-center gap-4 left-2 top-2 text-sm tracking-widest min-w-[17rem]">
+        <div className="fixed font-bold bg-color4 text-color1 py-1 px-2 rounded-lg flex justify-center items-center gap-4 left-4 top-4 text-sm tracking-widest min-w-[17rem]">
           <span>{date.toLocaleDateString()}</span>
           <span>{date.toLocaleTimeString()}</span>
           <span>{getDayName(date.getDay())}</span>
@@ -256,7 +256,7 @@ export function Pomodoro() {
       <div id="settings" ref={settingsRef}>
         <div
           id="settingsButton"
-          className="fixed bg-color4 text-color1 py-1 px-2 rounded-lg flex justify-center items-center right-2 bottom-2 font-bold cursor-pointer"
+          className="fixed bg-color4 text-color1 py-1 px-2 rounded-lg flex justify-center items-center right-4 bottom-4 font-bold cursor-pointer"
           onClick={() => setShowModal(!showModal)}
         >
           <div className="flex justify-end items-center gap-2 text-sm rounded-md cursor-pointer ">
@@ -297,7 +297,7 @@ export function Pomodoro() {
           </div>
         </div>
         <div
-          className={`fixed w-40 h-40 bg-color4 rounded-lg right-32  bottom-2 text-color1 flex justify-center p-4 items-center flex-col gap-4
+          className={`fixed w-40 h-40 bg-color4 rounded-lg right-[8rem] bottom-4 text-color1 flex justify-center p-4 items-center flex-col gap-4
       ${showModal ? "block" : "hidden"}
       `}
         >
